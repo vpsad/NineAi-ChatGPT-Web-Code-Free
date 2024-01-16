@@ -1,4 +1,4 @@
-# 某9-未编译源码-ChatGPT-Web-可商用
+# 某9-未编译源码-ChatGPT-Web
 
 某9演示站: https://ai.jiangly.com
 
@@ -16,27 +16,66 @@
 - service 服务端代码
 
 ## 本地开发
+1. 进入 `service` 目录，创建 `.env` 文件，修改和测试数据库信息连接信息和 Redis 配置。
+2. 数据库名称不能已经存在默认是chatgpt
+3. redis、mysql 一定要先本地测试通，再保存.env文件
+4. 上诉工作完成后执行：
+```
+pnpm i
+pnpm dev
+```
+> 注意注意！这一步必须做,自动创建数据库,否则后面没有数据库、各种失败！
 
+```
+# 安装依赖
+pnpm install
+
+# 启动项目
+pnpm dev
+
+# 打包项目
+pnpm build
+```
 ### 三端统一命令
-- pnpm install 安装依赖
-- pnpm dev  启动项目
-- pnpm build 打包项目
+```
+project-root
+|-- chat           # 用户端代码
+|-- admin          # 管理端代码
+|-- service        # 服务端代码
+```
 ### 启动项目
-- 分别安装依赖 pnpm i
-- 首先启动服务端进入service 创建.env文件 在其中修改 测试数据库信息和redis 配置完成后 pnpm dev
-- 数据库通过orm映射 启动项目会自动创建数据库
-- 启动完成后可以打开chat admin pnpm dev启动
+分别安装依赖并启动项目：
+1. 进入 `chat` 目录，执行以下命令启动用户端：
+```
+pnpm i
+pnpm dev
+```
+2. 进入 `admin` 目录，执行以下命令启动管理端：
+```
+pnpm i
+pnpm dev
+```
 ### 关于授权
-- 授权模块在 src/modules/globalConfig/globalConfig.service.ts 文件下
-- 对函数 nineAiCheckAuth 移除其中内容就并且移除onModuleInit的nineAiCheckAuth就可以移除授权
-- 对应的 src/modules/task/task.service.ts中的定时任务也可以移除掉 checkauth 定时任务
-- 打包路径问题
-- service
-- 后端服务直接 pnpm build 即可 .env为环境变量文件 需要后续自己挂载或者创建 项目有 示例文件.env.example
-- 打包命令会对代码混淆，打包之后 只需要下图这些文件即可、其他文件不再需要
+授权模块位于 `src/modules/globalConfig/globalConfig.service.ts` 文件下。如果要移除授权，请清空 `nineAiCheckAuth` 函数内容，并移除 `onModuleInit` 中的 `nineAiCheckAuth`。
+对应的定时任务也可以移除，位于 `src/modules/task/task.service.ts` 文件中的 `checkauth` 定时任务。
+### 打包路径问题
+#### 后端服务
+后端服务只需执行以下命令即可：
+```
+pnpm build
+```
+生成七个文件，其中 `.env` 是环境变量文件，需要在后续部署时自行挂载或创建。项目提供示例文件 `.env.example`。
+
+#### chat（前端项目）
+前端项目打包使用配置文件 `.env.production`，与 `admin` 相同。修改文件中的变量即可，如果分开部署，请填写线上后端服务地址。
+
+#### admin（管理端）
+管理端与 chat 部署方式相同，修改 `.env.production` 中的配置即可。分离部署时，只需替换线上地址，其余配置暂时用不到。
+
+### 其他文件
 
 
-### 后端服务打包后需要这七个文件
+#### 后端服务打包后需要这七个文件
 
 - chat:前端项目打包的配置文件是.env.production 和admin相同
 
@@ -46,5 +85,11 @@
 
 - 同样分离部署只需要打开红框的内容即可、替换为自己的线上地址 其余配置并不需要修改 也暂时用不到
 
-### 其他文件
+### 其他问题
 刷新404问题:前端history项目刷新都会404 需要对nginx进行配置
+
+### 效果图如下
+#### 用户界面
+![用户界面](https://github.com/vpsad/NineAi-ChatGPT-Web-Code-Free/blob/main/nine-user.jpg?raw=true)
+#### 管理界面
+![管理界面](https://github.com/vpsad/NineAi-ChatGPT-Web-Code-Free/blob/main/nineadmin.jpg?raw=true)
